@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: Arial, sans-serif;
   background: #0F172A;
   color: white;
   text-align: center;
@@ -12,25 +12,23 @@ body {
 
 input {
   padding: 12px;
-  margin: 10px;
   border-radius: 8px;
   border: none;
-  width: 200px;
+  margin: 10px;
 }
 
 button {
   padding: 12px 20px;
   border-radius: 8px;
   border: none;
-  cursor: pointer;
   background: #2563EB;
   color: white;
+  cursor: pointer;
   font-weight: bold;
-  transition: 0.2s;
 }
 
 button:hover {
-  background: #1d4ed8;
+  background: #1D4ED8;
 }
 
 .hidden {
