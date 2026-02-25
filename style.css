@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0F172A;
+  color: white;
+  text-align: center;
+}
+
+.container {
+  padding: 40px;
+}
+
+input {
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+  width: 200px;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #2563EB;
+  color: white;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.hidden {
+  display: none;
+}
+
+#answers button {
+  display: block;
+  margin: 10px auto;
+  width: 250px;
+  background: #7C3AED;
+}
