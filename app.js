@@ -1,76 +1,123 @@
-// 🔥 FIREBASE CONFIG (replace with yours)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
-};
+let playerName = "";
+let score = 0;
+let currentQuestion = 0;
+let timerInterval;
+let timeLeft = 10;
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const quizData = [
+  {
+    question: "What is the capital of France?",
+    answers: ["Paris", "Berlin", "Madrid", "Rome"],
+    correct: "Paris"
+  },
+  {
+    question: "2 + 2 = ?",
+    answers: ["3", "4", "5", "6"],
+    correct: "4"
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    answers: ["Earth", "Mars", "Jupiter", "Saturn"],
+    correct: "Mars"
+  }
+];
 
-let username = "";
-let room = "";
+function startGame() {
+  playerName = document.getElementById("player-name").value;
+  if (!playerName) return alert("Enter your name!");
 
-// Example Question
-const quizData = {
-  question: "What is the capital of France?",
-  answers: ["Paris", "Berlin", "Madrid", "Rome"],
-  correct: "Paris"
-};
-
-function joinRoom() {
-  username = document.getElementById("username").value;
-  room = document.getElementById("room").value;
-
-  if (!username || !room) return alert("Fill in all fields!");
-
-  document.getElementById("join-screen").classList.add("hidden");
+  document.getElementById("start-screen").classList.add("hidden");
   document.getElementById("quiz-screen").classList.remove("hidden");
-  document.getElementById("leaderboard").classList.remove("hidden");
-
-  db.ref("rooms/" + room + "/players/" + username).set({
-    score: 0
-  });
 
   loadQuestion();
-  listenLeaderboard();
 }
 
 function loadQuestion() {
-  document.getElementById("question").innerText = quizData.question;
+  if (currentQuestion >= quizData.length) {
+    endGame();
+    return;
+  }
+
+  const questionObj = quizData[currentQuestion];
+  document.getElementById("question").innerText = questionObj.question;
 
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
 
-  quizData.answers.forEach(answer => {
+  questionObj.answers.forEach(answer => {
     const btn = document.createElement("button");
     btn.innerText = answer;
     btn.onclick = () => submitAnswer(answer);
     answersDiv.appendChild(btn);
   });
+
+  startTimer();
 }
 
 function submitAnswer(answer) {
-  if (answer === quizData.correct) {
-    db.ref("rooms/" + room + "/players/" + username + "/score")
-      .transaction(score => (score || 0) + 10);
+  clearInterval(timerInterval);
+
+  if (answer === quizData[currentQuestion].correct) {
+    score += timeLeft * 10;
   }
+
+  currentQuestion++;
+  loadQuestion();
 }
 
-function listenLeaderboard() {
-  db.ref("rooms/" + room + "/players").on("value", snapshot => {
-    const players = snapshot.val();
-    const list = document.getElementById("players");
-    list.innerHTML = "";
+function startTimer() {
+  timeLeft = 10;
+  document.getElementById("timer").innerText = "Time left: " + timeLeft;
 
-    for (let player in players) {
-      const li = document.createElement("li");
-      li.innerText = player + " - " + players[player].score;
-      list.appendChild(li);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = "Time left: " + timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      currentQuestion++;
+      loadQuestion();
     }
+  }, 1000);
+}
+
+function endGame() {
+  document.getElementById("quiz-screen").classList.add("hidden");
+  document.getElementById("end-screen").classList.remove("hidden");
+  document.getElementById("final-score").innerText =
+    playerName + ", your score: " + score;
+
+  saveScore();
+  loadLeaderboard();
+}
+
+function restartGame() {
+  score = 0;
+  currentQuestion = 0;
+  document.getElementById("end-screen").classList.add("hidden");
+  document.getElementById("start-screen").classList.remove("hidden");
+}
+
+function saveScore() {
+  let leaderboard = JSON.parse(localStorage.getItem("nexquiz-leaderboard")) || [];
+  leaderboard.push({ name: playerName, score: score });
+
+  leaderboard.sort((a, b) => b.score - a.score);
+  leaderboard = leaderboard.slice(0, 10);
+
+  localStorage.setItem("nexquiz-leaderboard", JSON.stringify(leaderboard));
+}
+
+function loadLeaderboard() {
+  const leaderboard = JSON.parse(localStorage.getItem("nexquiz-leaderboard")) || [];
+  const list = document.getElementById("leaderboard-list");
+  list.innerHTML = "";
+
+  leaderboard.forEach(player => {
+    const li = document.createElement("li");
+    li.innerText = player.name + " - " + player.score;
+    list.appendChild(li);
   });
 }
+
+loadLeaderboard();
