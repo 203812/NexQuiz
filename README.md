@@ -30,4 +30,4 @@ Compete with friends or classmates in real-time quiz battles and climb the leade
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/nexquiz.git
+git clone https://github.com/203812/nexquiz.git
