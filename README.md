@@ -8,7 +8,7 @@ Compete with friends or classmates in real-time quiz battles and climb the leade
 ## 🎯 Features
 
 - 🎮 Real-time multiplayer quiz battles
-- 🏆 Live leaderboard system
+- 🏆 Live leaderboard system (planned)
 - ⚡ Fast and responsive UI
 - 🎨 Modern design with clean animations
 - 📱 Mobile-friendly interface
